@@ -23,7 +23,7 @@ def transcribe(audio_file, api_use: bool = False):
         dotenv.load_dotenv()
         OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-        if OPENAI_API_KEY:
+        if OPENAI_API_KEY is not None or OPENAI_API_KEY != "":
             openai.api_key = os.getenv("OPENAI_API_KEY")
             transcript = openai.Audio.transcribe("whisper-1", audio_file)
         else:
