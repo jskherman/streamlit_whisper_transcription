@@ -1,9 +1,10 @@
+import datetime
 import os
 import sys
-import datetime
-import streamlit as st
 
+import streamlit as st
 from audio_recorder_streamlit import audio_recorder
+
 from whisper_API import transcribe
 
 
@@ -31,8 +32,9 @@ def transcribe_audio(file_path):
     :param file_path: The path of the audio file to transcribe
     :return: The transcribed text
     """
-    with open(file_path, "rb") as audio_file:
-        transcript = transcribe(audio_file)
+    # with open(file_path, "rb") as audio_file:
+    #     transcript = transcribe(audio_file)
+    transcript = transcribe(file_path)
 
     return transcript["text"]
 
