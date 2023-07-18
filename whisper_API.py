@@ -31,7 +31,7 @@ def transcribe(audio_file, api_use: bool = False):
             
     else:
         model = load_model("base")
-        transcript = model.transcribe(audio_file)
+        transcript = model.transcribe(audio_file, fp16=False)
 
     return transcript
 
