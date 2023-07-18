@@ -1,5 +1,19 @@
 *.env
 
+# Audio files
+*.mp3
+*.mp4
+*.wav
+*.m4a
+*.mpeg4
+*.flac
+*.ogg
+*.opus
+*.aac
+
+
+#------------------------------------
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
