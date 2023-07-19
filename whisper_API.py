@@ -19,18 +19,20 @@ def transcribe(audio_file, api_use: bool = False):
     """
 
     if api_use:
-        # # import API key from .env file
-        dotenv.load_dotenv()
-        OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+        # import API key from .env file
+        API_KEY = st.session_state["OPENAI_API_KEY"]
 
-        if OPENAI_API_KEY is not None or OPENAI_API_KEY != "":
-            openai.api_key = os.getenv("OPENAI_API_KEY")
+        if API_KEY is not None or API_KEY != "":
+            openai.api_key = API_KEY
             transcript = openai.Audio.transcribe("whisper-1", audio_file)
         else:
-            st.error("API key not found. Please add it to the .env file.")
+            st.error("API key not found. Please input it first in the settings.")
             
     else:
-        model = load_model("base")
+        if "model" in st.session_state:
+            model = load_model(st.session_state["model"])
+        else:
+            model = load_model("base")
         transcript = model.transcribe(audio_file, fp16=False)
 
     return transcript

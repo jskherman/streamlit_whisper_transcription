@@ -42,7 +42,7 @@ def transcribe_audio(file_path):
 
 def transcribe_button(transcribe_key: str, copykey: str):
     # Transcribe button action
-    if st.button("Transcribe", key=transcribe_key):
+    if st.button("Transcribe", key=transcribe_key, type="primary"):
         # Find the newest audio file
         audio_file_path = max(
             [f for f in os.listdir(".") if f.startswith("audio")],
@@ -53,21 +53,23 @@ def transcribe_button(transcribe_key: str, copykey: str):
         transcript_text = transcribe_audio(audio_file_path)
 
         # Display the transcript
-        st.header("Transcript")
+        st.subheader("Transcript:")
         st.session_state["transcript"] = transcript_text
-        st.write(transcript_text)
+        st.markdown(f"{transcript_text}")
         # st.code(transcript_text)
 
-        if st.button("Copy to Clipboard", key=copykey):
-            pyperclip.copy(transcript_text)
-            pyperclip.paste()
-        
         # Save the transcript to a text file
         with open("transcript.txt", "w") as f:
             f.write(transcript_text)
 
-        # Provide a download button for the transcript
-        st.download_button("Download Transcript", transcript_text)
+        button1, button2, button3 = st.columns([1, 1, 2])
+        with button1:
+            if st.button("Copy to Clipboard", key=copykey):
+                pyperclip.copy(transcript_text)
+                pyperclip.paste()
+        with button2:    
+            # Provide a download button for the transcript
+            st.download_button("Download Transcript", transcript_text)
 
 def delete_temp_audio_files():
     """
@@ -100,12 +102,22 @@ def main():
 
     # Record Audio tab
     with tab1:
-        audio_bytes = audio_recorder()
-        if audio_bytes:
-            st.audio(audio_bytes, format="audio/wav")
-            save_audio_file(audio_bytes, "mp3")
+        st.info("""
+                If the record button doesn't appear refresh the page by pressing `R` or `F5`.
+                """, icon="ℹ")
 
+        mic1, mic2 = st.columns([1, 3])
+
+        with mic1:
+            audio_bytes = audio_recorder()
+
+        with mic2:
+            if audio_bytes:
+                st.audio(audio_bytes, format="audio/wav")
+                save_audio_file(audio_bytes, "mp3")
+        
         transcribe_button("mic", "copy1")
+
 
     # Upload Audio tab
     with tab2:
@@ -119,26 +131,59 @@ def main():
     # Settings tab
     with tab3:
         st.header("Settings")
-        
-        if st.button("Toggle Whisper API use"):
-            st.session_state["api_use"] = not st.session_state["api_use"]
-            st.success(f"Whisper API use set to **{str(st.session_state['api_use']).upper()}**")
 
-        # Delete temporary audio files
-        if st.button("Delete Temporary Audio Files"):
-            delete_temp_audio_files()
-            st.success("Temporary audio files deleted.")
+        with st.expander("Whisper API Settings", expanded=False):
+            st.session_state["OPENAI_API_KEY"] = st.text_input("Input OpenAI API Key", type="password")
+
+            if st.button("Toggle Whisper API use"):
+                if "OPENAI_API_KEY" not in st.session_state or st.session_state["OPENAI_API_KEY"] == "":
+                    st.session_state["api_use"] = False
+                    st.error("Please input OpenAI API Key first.")
+                else:
+                    st.session_state["api_use"] = not st.session_state["api_use"]
+                    st.success(f"Whisper API use set to **{str(st.session_state['api_use']).upper()}**")
+
+        col1, col2 = st.columns([2, 3])
+
+        with col1:
+            # Delete temporary audio files
+            if st.button("Delete Temporary Audio Files"):
+                delete_temp_audio_files()
+                st.success("Temporary audio files deleted.")
+
+            # Delete temporary audio files
+            if st.button("Clear recent transcript"):
+                st.session_state["transcript"] = ""
+                st.success("Transcript cleared.")
+
+        with col2:
+            # Select model of Whisper
+            st.session_state["model"] = st.selectbox(
+                "Which model of Whisper to use?",
+                options=["tiny", "base", "small", "medium", "large"],
+                index=1
+            )
         
 
     st.write("---")
 
     if "transcript" in st.session_state:
-        with st.expander("Recent Transcript", expanded=True):
-            st.write(st.session_state["transcript"])
+        with st.expander("Recent Transcript", expanded=False):
+            if st.session_state["transcript"] == "":
+                st.info("No recent transcript.")
+            else:
+                st.markdown(f"""
+                            {st.session_state["transcript"]}
 
-            if st.button("Copy to Clipboard", key="copy2"):
-                    pyperclip.copy(st.session_state["transcript"])
-                    pyperclip.paste()
+                            > **Copy transcript**:
+                            > ```
+                            > {st.session_state["transcript"]}
+                            > ```
+                            """)
+
+                # if st.button("Copy to Clipboard", key="copy2"):
+                #         pyperclip.copy(st.session_state["transcript"])
+                #         pyperclip.paste()
 
 
 if __name__ == "__main__":
