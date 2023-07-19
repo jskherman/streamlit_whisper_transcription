@@ -40,6 +40,7 @@ def transcribe_audio(file_path):
 
     return transcript["text"]
 
+
 def transcribe_button(transcribe_key: str, copykey: str):
     # Transcribe button action
     if st.button("Transcribe", key=transcribe_key, type="primary"):
@@ -67,9 +68,10 @@ def transcribe_button(transcribe_key: str, copykey: str):
             if st.button("Copy to Clipboard", key=copykey):
                 pyperclip.copy(transcript_text)
                 pyperclip.paste()
-        with button2:    
+        with button2:
             # Provide a download button for the transcript
             st.download_button("Download Transcript", transcript_text)
+
 
 def delete_temp_audio_files():
     """
@@ -84,7 +86,7 @@ def delete_temp_audio_files():
     # Delete all audio files
     for audio_file in audio_files:
         os.remove(audio_file)
-        
+
 
 def main():
     """
@@ -102,9 +104,12 @@ def main():
 
     # Record Audio tab
     with tab1:
-        st.info("""
+        st.info(
+            """
                 If the record button doesn't appear refresh the page by pressing `R` or `F5`.
-                """, icon="ℹ")
+                """,
+            icon="ℹ",
+        )
 
         mic1, mic2 = st.columns([1, 3])
 
@@ -115,33 +120,49 @@ def main():
             if audio_bytes:
                 st.audio(audio_bytes, format="audio/wav")
                 save_audio_file(audio_bytes, "mp3")
-        
-        transcribe_button("mic", "copy1")
 
+        transcribe_button("mic", "copy1")
 
     # Upload Audio tab
     with tab2:
         audio_file = st.file_uploader("Upload Audio", type=["mp3", "mp4", "wav", "m4a"])
         if audio_file:
-            file_extension = audio_file.type.split('/')[1]
+            file_extension = audio_file.type.split("/")[1]
             save_audio_file(audio_file.read(), file_extension)
-        
+
         transcribe_button("upload", "copy2")
 
     # Settings tab
     with tab3:
         st.header("Settings")
 
+        st.info(
+            """
+            If you don't have an OpenAI API Key, you can get one [here](https://platform.openai.com).
+
+            Check out the code for this app on
+            [GitHub](https://github.com/jskherman/streamlit_whisper_transcription).
+            """,
+            icon="ℹ",
+        )
+
         with st.expander("Whisper API Settings", expanded=False):
-            st.session_state["OPENAI_API_KEY"] = st.text_input("Input OpenAI API Key", type="password")
+            st.session_state["OPENAI_API_KEY"] = st.text_input(
+                "Input OpenAI API Key", type="password"
+            )
 
             if st.button("Toggle Whisper API use"):
-                if "OPENAI_API_KEY" not in st.session_state or st.session_state["OPENAI_API_KEY"] == "":
+                if (
+                    "OPENAI_API_KEY" not in st.session_state
+                    or st.session_state["OPENAI_API_KEY"] == ""
+                ):
                     st.session_state["api_use"] = False
                     st.error("Please input OpenAI API Key first.")
                 else:
                     st.session_state["api_use"] = not st.session_state["api_use"]
-                    st.success(f"Whisper API use set to **{str(st.session_state['api_use']).upper()}**")
+                    st.success(
+                        f"Whisper API use set to **{str(st.session_state['api_use']).upper()}**"
+                    )
 
         col1, col2 = st.columns([2, 3])
 
@@ -161,9 +182,8 @@ def main():
             st.session_state["model"] = st.selectbox(
                 "Which model of Whisper to use?",
                 options=["tiny", "base", "small", "medium", "large"],
-                index=1
+                index=1,
             )
-        
 
     st.write("---")
 
@@ -172,14 +192,16 @@ def main():
             if st.session_state["transcript"] == "":
                 st.info("No recent transcript.")
             else:
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                             {st.session_state["transcript"]}
 
                             > **Copy transcript**:
                             > ```
                             > {st.session_state["transcript"]}
                             > ```
-                            """)
+                            """
+                )
 
                 # if st.button("Copy to Clipboard", key="copy2"):
                 #         pyperclip.copy(st.session_state["transcript"])
