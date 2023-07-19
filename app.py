@@ -138,7 +138,8 @@ def main():
 
         st.info(
             """
-            If you don't have an OpenAI API Key, you can get one [here](https://platform.openai.com).
+            If you don't have an OpenAI API Key, you can get one
+            [here](https://platform.openai.com/account/api-keys).
 
             Check out the code for this app on
             [GitHub](https://github.com/jskherman/streamlit_whisper_transcription).
