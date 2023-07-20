@@ -138,10 +138,12 @@ def main():
 
         st.info(
             """
+            For large audio files or audio with multiple languages, you should use 
+            [OpenAI's whisper API](https://platform.openai.com/docs/guides/speech-to-text).  
             If you don't have an OpenAI API Key, you can get one
             [here](https://platform.openai.com/account/api-keys).
 
-            Check out the code for this app on
+            You can also check out the code for this app on
             [GitHub](https://github.com/jskherman/streamlit_whisper_transcription).
             """,
             icon="ℹ",
@@ -158,7 +160,7 @@ def main():
                     or st.session_state["OPENAI_API_KEY"] == ""
                 ):
                     st.session_state["api_use"] = False
-                    st.error("Please input OpenAI API Key first.")
+                    st.error("Please input an API Key first.")
                 else:
                     st.session_state["api_use"] = not st.session_state["api_use"]
                     st.success(

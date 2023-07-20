@@ -23,8 +23,18 @@ def transcribe(audio_file, api_use: bool = False):
         API_KEY = st.session_state["OPENAI_API_KEY"]
 
         if API_KEY is not None or API_KEY != "":
-            openai.api_key = API_KEY
-            transcript = openai.Audio.transcribe("whisper-1", audio_file)
+            try:
+                openai.api_key = API_KEY
+            except openai.error.AuthenticationError as e:
+                st.error(f"Please check settings, API key is **invalid**: {e}", icon="🔥")
+                st.stop()
+            except openai.error.APIError as e:
+                st.error(f"OpenAI API returned an API Error: {e}", icon="🔥")
+            
+            try:
+                transcript = openai.Audio.transcribe("whisper-1", audio_file)
+            except openai.error.APIConnectionError as e:
+                st.error(f"Failed to connect to OpenAI API: {e}", icon="🔥")
         else:
             st.error("API key not found. Please input it first in the settings.")
             
