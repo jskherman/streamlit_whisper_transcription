@@ -6,7 +6,6 @@ import sys
 import pyperclip
 import streamlit as st
 from audio_recorder_streamlit import audio_recorder
-
 from whisper_API import transcribe
 
 
@@ -173,12 +172,12 @@ def main():
             # Delete temporary audio files
             if st.button("Delete Temporary Audio Files"):
                 delete_temp_audio_files()
-                st.success("Temporary audio files deleted.")
+                st.toast("Temporary audio files deleted.", icon="🗑️")
 
             # Delete temporary audio files
             if st.button("Clear recent transcript"):
                 st.session_state["transcript"] = ""
-                st.success("Transcript cleared.")
+                st.toast("Transcript cleared.", icon="🗑️")
 
         with col2:
             # Select model of Whisper
