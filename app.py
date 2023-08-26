@@ -184,7 +184,7 @@ def main():
             # Select model of Whisper
             st.session_state["model"] = st.selectbox(
                 "Which model of Whisper to use?",
-                options=["tiny", "base", "small", "medium"],
+                options=["tiny", "base", "small"],
                 index=2,
             )
 
