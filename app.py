@@ -6,6 +6,7 @@ import sys
 import pyperclip
 import streamlit as st
 from audio_recorder_streamlit import audio_recorder
+
 from whisper_API import transcribe
 
 
@@ -59,7 +60,7 @@ def transcribe_button(transcribe_key: str, copykey: str):
         # st.code(transcript_text)
 
         # Save the transcript to a text file
-        with open("transcript.txt", "w") as f:
+        with open("transcript.txt", "w", encoding="utf-8") as f:
             f.write(transcript_text)
 
         button1, button2, button3 = st.columns([1, 1, 2])
@@ -183,8 +184,8 @@ def main():
             # Select model of Whisper
             st.session_state["model"] = st.selectbox(
                 "Which model of Whisper to use?",
-                options=["tiny", "base"],
-                index=1,
+                options=["tiny", "base", "small", "medium"],
+                index=2,
             )
 
     st.write("---")
